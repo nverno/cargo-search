@@ -3,6 +3,7 @@
 
 (defvar cargo--test-file
   (expand-file-name "Cargo.toml" temporary-file-directory))
+(defvar cargo--it nil)
 
 (defmacro cargo--should-respond (init expect reply &rest body)
   "BODY should return IT to be compared with EXPECT. REPLY is keys to respond
@@ -16,7 +17,7 @@ to requested input."
            (unread-command-events
             ,(when reply `(listify-key-sequence (kbd ,reply)))))
        ,@body
-       (should (string= it ,expect)))))
+       (should (string= cargo--it ,expect)))))
 
 (defmacro cargo--should-insert (init expect reply &rest body)
   "Insert INIT into temporary Cargo.toml, evaluate BODY in that 
@@ -43,7 +44,7 @@ directory, then compare EXPECT to contents of Cargo.toml."
   "cargo search should find root"
   (cargo--should-respond
    "" cargo--test-file nil
-   (setq it (cargo-search-root))))
+   (setq cargo--it (cargo-search-root))))
 
 (ert-deftest cargo--test-check-dep-1 ()
   "cargo search should find deps"
@@ -53,7 +54,7 @@ regex = \"0.0.1\""
    "0.0.1" nil
    (with-temp-buffer
      (insert-file-contents cargo--test-file)
-     (setq it (car (cargo-search-check-dep "regex"))))))
+     (setq cargo--it (car (cargo-search-check-dep "regex"))))))
 
 (ert-deftest cargo--test-check-dep-2 ()
   ""
@@ -62,7 +63,7 @@ regex = \"0.0.1\""
    nil nil
    (with-temp-buffer
      (insert-file-contents cargo--test-file)
-     (setq it (car (cargo-search-check-dep "regex"))))))
+     (setq cargo--it (car (cargo-search-check-dep "regex"))))))
 
 (ert-deftest cargo--test-add-crate-1 ()
   "adds new crate"
