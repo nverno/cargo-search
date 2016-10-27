@@ -98,7 +98,7 @@ completes, the result is converted into a tabulated list in
 ;;; Cargo search mode functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; last known project root
-(defvar cargo-search-project-root nil)
+(defvar-local cargo-search-project-root nil)
 
 ;; find project's Cargo.toml, or prompt if unable
 (defun cargo-search-root ()
