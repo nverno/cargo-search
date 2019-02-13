@@ -1,4 +1,4 @@
-;;; cargo-search --- search and add cargo dependencies
+;;; cargo-search.el --- search and add cargo dependencies
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/cargo-search
@@ -31,7 +31,8 @@
 ;;; Code:
 (eval-when-compile
   (require 'cl-lib)
-  (require 'subr-x))
+  (require 'subr-x)
+  (defvar cargo-search-buffer))
 
 ;;;###autoload
 (defun cargo-search-crates (query)
