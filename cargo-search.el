@@ -1,4 +1,4 @@
-;;; cargo-search.el --- search and add cargo dependencies
+;;; cargo-search.el --- search and add cargo dependencies  -*- lexical-binding: t; -*-
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/cargo-search
@@ -34,9 +34,11 @@
   (require 'subr-x)
   (defvar cargo-search-buffer))
 
+(defvar cargo-search-limit 30)
+
 ;;;###autoload
 (defun cargo-search-crates (query)
-  "Start 'cargo search QUERY' process in the background.  When it 
+  "Start \\='cargo search QUERY\\=' process in the background.  When it 
 completes, the result is converted into a tabulated list in 
 `cargo-search-mode' and that buffer is brought into focus."
   (interactive (list (read-string "Search for: ")))
@@ -44,8 +46,8 @@ completes, the result is converted into a tabulated list in
     (let ((inhibit-read-only t)) (erase-buffer)))
   (set-process-sentinel
    (start-process "cargo-search" cargo-search-buffer "cargo"
-                  "search" query)
-   'cargo-search-process-result))
+                  "search" query "--limit" (number-to-string cargo-search-limit))
+   #'cargo-search-process-result))
 
 ;; ------------------------------------------------------------
 
@@ -54,7 +56,9 @@ completes, the result is converted into a tabulated list in
 
 ;; regexp to match results
 (defvar cargo-search-re
-  "\\(^[a-zA-Z][^ ]+\\)\\s-*(\\([.0-9]+\\))\\s-*\\([^\n]*\\)")
+  "\\(\\S-+\\) = \"\\([0-9.]+\\)\"\\s-*\\([^\n]*\\)"
+  ;; "\\(^[a-zA-Z][^ ]+\\)\\s-*(\\([.0-9]+\\))\\s-*\\([^\n]*\\)"
+  )
 
 ;; structure to hold crate info
 (cl-defstruct (cargo-search-crate
@@ -72,7 +76,7 @@ completes, the result is converted into a tabulated list in
   (nreverse (mapcar 'cargo-search--table-entry crates)))
 
 ;; munge cargo search results
-(defun cargo-search-process-result (p m)
+(defun cargo-search-process-result (p _m)
   (when (zerop (process-exit-status p))
     (let ((inhibit-read-only t)
           crates)
@@ -134,7 +138,7 @@ completes, the result is converted into a tabulated list in
                              (line-end-position))
   (when-let ((toml (cargo-search-root))
              (do-it t))
-    (cl-destructuring-bind (name version desc) (append crate ())
+    (cl-destructuring-bind (name version _desc) (append crate ())
       (and (or no-prompt
                (y-or-n-p (format "Add dependency for %s %s? " name version)))
            (with-current-buffer (find-file-noselect toml t)

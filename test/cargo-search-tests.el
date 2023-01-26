@@ -70,7 +70,7 @@ regex = \"0.0.1\""
   (cargo--should-insert
    "[dependencies]"
    "[dependencies]
-regex = \"1.1.1\""
+regex = \"1.1.1\"\n"
    "y RET"
    (cargo-search-add-crate ["regex" "1.1.1" "ababb"] t)))
 
@@ -80,7 +80,7 @@ regex = \"1.1.1\""
    "[dependencies]
 regex = \"1.0.0\""
    "[dependencies]
-regex = \"1.1.1\""
+regex = \"1.1.1\"\n"
    "y RET"
    (cargo-search-add-crate ["regex" "1.1.1" "ababb"] t)))
 
@@ -91,7 +91,7 @@ regex = \"1.1.1\""
 blah = \"1.1.1\""
    "[dependencies]
 regex = \"1.1.1\"
-blah = \"1.1.1\""
+blah = \"1.1.1\"\n"
    "y RET"
    (cargo-search-add-crate ["regex" "1.1.1" "ababb"] t)))
 
