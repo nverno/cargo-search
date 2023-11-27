@@ -1,10 +1,10 @@
-;;; cargo-search.el --- search and add cargo dependencies  -*- lexical-binding: t; -*-
+;;; cargo-search.el --- Interface to search and add cargo dependencies -*- lexical-binding: t; -*-
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/cargo-search
-;; Package-Requires: 
-;; Copyright (C) 2016, Noah Peart, all rights reserved.
+;; Package-Requires: ((emacs "25.3"))
 ;; Created: 26 October 2016
+;; Version: 0.1.0
 
 ;; This file is not part of GNU Emacs.
 ;;
@@ -24,22 +24,24 @@
 ;; Floor, Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
-
-;; [![Build Status](https://travis-ci.org/nverno/cargo-search.svg?branch=master)](https://travis-ci.org/nverno/cargo-search)
-
-;;; Description:
+;;
+;; Search cargo crate.
+;;
 ;;; Code:
+
 (eval-when-compile
   (require 'cl-lib)
-  (require 'subr-x)
-  (defvar cargo-search-buffer))
+  (require 'subr-x))
+
+;; process buffer for cargo search
+(defvar cargo-search-buffer "*cargo-search*")
 
 (defvar cargo-search-limit 30)
 
 ;;;###autoload
 (defun cargo-search-crates (query)
-  "Start \\='cargo search QUERY\\=' process in the background.  When it 
-completes, the result is converted into a tabulated list in 
+  "Start \\='cargo search QUERY\\=' process in the background.
+When it completes, the result is converted into a tabulated list in
 `cargo-search-mode' and that buffer is brought into focus."
   (interactive (list (read-string "Search for: ")))
   (with-current-buffer (get-buffer-create cargo-search-buffer)
@@ -51,15 +53,11 @@ completes, the result is converted into a tabulated list in
 
 ;; ------------------------------------------------------------
 
-;; process buffer for cargo search
-(defvar cargo-search-buffer "*cargo-search*")
-
 ;; regexp to match results
 (defvar cargo-search-re
-  "\\(\\S-+\\) = \"\\([0-9.]+\\)\"\\s-*\\([^\n]*\\)"
-  ;; "\\(^[a-zA-Z][^ ]+\\)\\s-*(\\([.0-9]+\\))\\s-*\\([^\n]*\\)"
-  )
-
+  "\\(\\S-+\\) = \"\\([0-9.]+\\)\"\\s-*\\([^\n]*\\)")
+;; "\\(^[a-zA-Z][^ ]+\\)\\s-*(\\([.0-9]+\\))\\s-*\\([^\n]*\\)"
+  
 ;; structure to hold crate info
 (cl-defstruct (cargo-search-crate
                (:constructor cargo-search-crate--create))
@@ -131,6 +129,8 @@ completes, the result is converted into a tabulated list in
 
 ;; open Cargo.toml, insert dependency
 (defun cargo-search-add-crate (crate &optional no-prompt)
+  "Add CRATE to cargo.toml.
+Dont prompt if NO-PROMPT is non-nil."
   (interactive (list (ignore-errors (tabulated-list-get-entry))))
   (unless crate (user-error "No crate at point."))
   ;; flash selected line
@@ -187,11 +187,11 @@ completes, the result is converted into a tabulated list in
     (define-key km (kbd "RET") 'cargo-search-add-crate)
     km))
 
-(define-derived-mode cargo-search-mode tabulated-list-mode
-  "Cargo Search"
-  "Crates found by cargo search.\n
-Commands:\n
-\\{cargo-search-mode-map}"
+(define-derived-mode cargo-search-mode tabulated-list-mode "CargoSearch"
+  "Crates found by cargo search.
+
+Commands:
+\\<cargo-search-mode-map>"
   (setq tabulated-list-format [("name" 15 nil)
                                ("version" 7 nil)
                                ("description" 60 nil)])
