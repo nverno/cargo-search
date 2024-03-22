@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node ./src/index.ts"
+  },
+  "name": "crates",
+  "version": "0.0.1",
+  "description": "Crates.io API",
+  "main": "index.js",
+  "author": "Noah Peart <noah.v.peart@gmail.com> (https://www.github.com/nverno)",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "commander": "^12.0.0"
+  }
+}
