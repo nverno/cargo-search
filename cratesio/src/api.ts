@@ -8,10 +8,10 @@ headers.append("User-Agent",
 
 export async function searchCrates<T>(query: string, options?: SearchOptions): Promise<T> {
   const url = new URL(`${baseUrl}/crates`);
-  url.searchParams.set("q", query);
+  url.searchParams.set("q", encodeURIComponent(query));
 
   if (options)
-    Object.entries(options).forEach(([k, v]) => url.searchParams.set(k, v.toString()));
+    Object.entries(options).forEach(([k, v]) => v && url.searchParams.set(k, v.toString()));
 
   const res = await fetch(url, {
     method: "GET",

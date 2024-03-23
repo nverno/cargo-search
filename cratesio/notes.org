@@ -1,0 +1,6 @@
+* crates.io
+
+* References
+- [[https://doc.rust-lang.org/cargo/reference/registry-index.html][rust registry index]]
+** Crates.io
+- [[https://crates.io/data-access][data access policy]]
