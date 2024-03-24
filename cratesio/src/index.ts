@@ -1,6 +1,17 @@
 import { Command, Option } from 'commander';
 import { searchCrates } from './api';
-import { Crate, CliOptions, SearchResponse, sortOptions, SearchOptions, Sort } from './types';
+import { Crate, CliOptions, sortOptions, SearchOptions, Sort, CrateField, crateFields } from './types';
+
+const defaultFields: CrateField[] = [
+  'name',
+  'exact_match',
+  'description',
+  'documentation',
+  'homepage',
+  'repository',
+  'max_version',
+  'max_stable_version',
+];
 
 const cli = new Command();
 
@@ -10,14 +21,17 @@ async function main() {
     .name("cratesio")
     .requiredOption('-q, --query <string>', 'search query')
     .option('-p, --page <number>', 'page number', '1')
-    .option('-c, --per-page <number>', 'results per page', '10')
+    .option('-c, --per-page <number>', 'results per page', '1')
     .addOption(new Option('-s, --sort <string>', 'sort results')
       .choices(sortOptions)
       .default('relevance'))
-    .option('--fields <fields...>', 'data fields to keep', 'name')
+    .addOption(new Option('--fields <fields...>', 'data fields to keep')
+      .choices(crateFields)
+      .default(defaultFields))
+    .option('--raw', 'dont serialize ouput as JSON', false)
     .parse();
 
-  const { query, perPage: per_page, page, sort, fields }: CliOptions = cli.opts();
+  const { query, perPage: per_page, page, sort, fields, raw }: CliOptions = cli.opts();
   // const [ query, ..._ignored ] = cli.args
 
   const searchOpts: SearchOptions = {
@@ -27,13 +41,16 @@ async function main() {
   };
 
   try {
-    const resp = await searchCrates<SearchResponse>(query, searchOpts);
+    const resp = await searchCrates(query, searchOpts);
     const crates: Crate[] = resp['crates'];
 
-    let res = typeof fields === 'string'
-      ? crates.map((o) => o[fields as string]).join('\n')
+    let res: any = typeof fields === 'string'
+      ? crates.map((o) => o[fields as string])
       : crates.map((o) => (fields as string[])
         .reduce((acc, f) => ({ ...acc, [f]: o[f] }), {}));
+
+    if (!raw)
+      res = JSON.stringify(res);
 
     console.log(res);
   } catch (err) {
