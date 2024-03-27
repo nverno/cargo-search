@@ -3,14 +3,15 @@ import { searchCrates } from './api';
 import { Crate, CliOptions, sortOptions, SearchOptions, Sort, CrateField, crateFields } from './types';
 
 const defaultFields: CrateField[] = [
-  'name',
-  'exact_match',
   'description',
   'documentation',
+  'exact_match',
   'homepage',
-  'repository',
-  'max_version',
+  'id',
   'max_stable_version',
+  'max_version',
+  'name',
+  'repository',
 ];
 
 const cli = new Command();
@@ -26,14 +27,16 @@ async function main() {
       .choices(sortOptions)
       .default('relevance'))
     .addOption(new Option('--fields <fields...>', 'data fields to keep')
-      .choices(crateFields)
+      .choices(['default'].concat(crateFields))
       .default(defaultFields))
     .option('--raw', 'dont serialize ouput as JSON', false)
     .parse();
 
-  const { query, perPage: per_page, page, sort, fields, raw }: CliOptions = cli.opts();
-  // const [ query, ..._ignored ] = cli.args
+  let { query, perPage: per_page, page, sort, fields, raw }: CliOptions = cli.opts();
 
+  if (fields.length === 1 && fields[0] === 'default')
+    fields = defaultFields;
+  
   const searchOpts: SearchOptions = {
     per_page,
     page,

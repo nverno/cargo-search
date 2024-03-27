@@ -1,20 +1,20 @@
 export const crateFields = [
-  "id",
-  "name",
+  "categories",
+  "created_at",
   "description",
   "documentation",
-  "homepage",
-  "repository",
-  "versions",
   "downloads",
-  "recent_downloads",
-  "categories",
-  "keywords",
-  "max_version",
-  "max_stable_version",
-  "created_at",
-  "updated_at",
   "exact_match",
+  "homepage",
+  "id",
+  "keywords",
+  "max_stable_version",
+  "max_version",
+  "name",
+  "recent_downloads",
+  "repository",
+  "updated_at",
+  "versions",
 ] as const;
 export type CrateField = typeof crateFields[number];
 
@@ -70,6 +70,6 @@ export interface CliOptions {
   raw?: boolean;
   page?: string;
   perPage?: string;
-  sort?: string;
-  fields?: string | string[];
+  sort?: Sort;
+  fields?: 'default' | CrateField | CrateField[];
 }
