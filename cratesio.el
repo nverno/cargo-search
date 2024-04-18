@@ -148,7 +148,7 @@ Query: <search> [OPTIONS]."
             (aset arr it-index (if (eq v ':null) "" v))))
         (push (list (gethash "name" h) arr) entries)))
     (if (null entries)
-        (user-error "No results")
+        (message "No results")
       (with-current-buffer (get-buffer-create cratesio-results-buffer)
         (let ((inhibit-read-only t))
           (erase-buffer))
@@ -180,7 +180,7 @@ KIND is one homepage, documentation, or repository."
 
 Commands:
 \\<cratesio-results-mode-map>"
-  (setq tabulated-list-format [("Name" 10 t)
+  (setq tabulated-list-format [("Name" 18 t)
                                ("Description" 50 nil)
                                ("Latest" 8 nil)
                                ("Stable" 8 nil)
