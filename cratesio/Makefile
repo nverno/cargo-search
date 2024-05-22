@@ -8,6 +8,10 @@ node "$(CURDIR)/dist/index.js" "$$@"
 endef
 export SCRIPT
 
+.PHONY: install cratesio all
+all:
+	@
+
 install: cratesio
 
 cratesio: $(PREFIX)/cratesio
@@ -18,6 +22,7 @@ $(PREFIX)/cratesio: $(BIN)
 
 $(BIN): $(SRC)
 	@npm run build
+
 
 .PHONY: clean distclean
 clean:
