@@ -103,18 +103,18 @@ When it completes, the result is converted into a tabulated list in
 
 ;; find project's Cargo.toml, or prompt if unable
 (defun cargo-search-root ()
-  (if-let ((root (locate-dominating-file
-                    (or default-directory buffer-file-name)
-                    "Cargo.toml")))
+  (if-let* ((root (locate-dominating-file
+                   (or default-directory buffer-file-name)
+                   "Cargo.toml")))
       (expand-file-name "Cargo.toml" (setq cargo-search-project-root
                                            root))
     (let ((default-directory
-            (read-directory-name
-             (format "Can't find Cargo.toml, %s: "
-                     (if cargo-search-project-root
-                         "use previous or reselect"
-                       "choose directory"))
-             (or cargo-search-project-root default-directory))))
+           (read-directory-name
+            (format "Can't find Cargo.toml, %s: "
+                    (if cargo-search-project-root
+                        "use previous or reselect"
+                      "choose directory"))
+            (or cargo-search-project-root default-directory))))
       (cargo-search-root))))
 
 ;; check if dependency is already listed, return version
