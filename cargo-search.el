@@ -134,13 +134,13 @@ Dont prompt if NO-PROMPT is non-nil."
   ;; flash selected line
   (cargo-search-blink-region (line-beginning-position)
                              (line-end-position))
-  (when-let ((toml (cargo-search-root))
-             (do-it t))
+  (when-let* ((toml (cargo-search-root))
+              (do-it t))
     (cl-destructuring-bind (name version _desc) (append crate ())
       (and (or no-prompt
                (y-or-n-p (format "Add dependency for %s %s? " name version)))
            (with-current-buffer (find-file-noselect toml t)
-             (when-let ((ver (cargo-search-check-dep name)))
+             (when-let* ((ver (cargo-search-check-dep name)))
                (setq do-it
                      (or no-prompt
                          (y-or-n-p
