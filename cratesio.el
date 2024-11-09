@@ -100,7 +100,7 @@ Query: <search> [OPTIONS]."
                      (transient-args transient-current-command)))
   (or callback (setq callback #'cratesio--show-results))
   (setq args (cons (format "--query=%s" query) (flatten-tree args)))
-  (if-let ((crate (gethash query cratesio-search-cache)))
+  (if-let* ((crate (gethash query cratesio-search-cache)))
       (funcall callback crate)
     (set-process-sentinel
      (apply #'start-process
